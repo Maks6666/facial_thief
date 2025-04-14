@@ -10,7 +10,7 @@ import cv2
 import torch
 
 class DeepTracker:
-    def __init__(self, path, device, threshold, remove=True):
+    def __init__(self, path, device, threshold, photos_amount, remove=True):
         self.path = path
         self.device = device
         self.tracker = DeepSort(max_iou_distance=0.5, max_age=10)
@@ -19,6 +19,7 @@ class DeepTracker:
         self.names = self.model.names
         self.remove = remove
         self.root_path = "/Users/maxkucher/opencv/facial_thief/generation"
+        self.photos_amount = photos_amount
 
     def load_model(self):
         model = YOLO("/Users/maxkucher/opencv/facial_thief/yolov11n-face.pt")
@@ -103,7 +104,7 @@ class DeepTracker:
             frame = self.draw(detected_objects, frame)
             path = os.path.join(self.root_path, str(idx))
             if img is not None:
-                generate(img, 5, path)
+                generate(img, self.photos_amount, path)
 
             if img is not None:
                 print(type(img))
@@ -118,7 +119,7 @@ class DeepTracker:
 path = 1
 device = "mps" if torch.backends.mps.is_available() else "cpu"
 threshold = 0.4
-tracker = DeepTracker(path, device, threshold)
+tracker = DeepTracker(path, device, threshold, 10)
 tracker()
 
 

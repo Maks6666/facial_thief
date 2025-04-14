@@ -24,5 +24,6 @@ def generate(tensor, amount, path_to_save):
         out = model.decoder(z)
         out = out.squeeze(0).permute(1,2,0).detach().cpu().numpy()
         out = (out * 255)
+        out = out[..., ::-1]
         cv2.imwrite(f"{path_to_save}/generated_{i}.jpg", out)
 
