@@ -17,7 +17,7 @@ class SortTracker:
         self.model = self.load_model()
         self.names = self.model.names
         self.sort = Sort(max_age=50, min_hits=8, iou_threshold=0.4)
-        self.coef = 50
+        self.coef = 150
         self.photo_amount = photo_amount
         self.remove = remove
 
@@ -59,23 +59,20 @@ class SortTracker:
     def extract(self, bboxes, idc, frame):
         img, idx = None, None
         for bbox, idx in zip(bboxes, idc):
-            if os.path.isdir(os.path.join("/Users/maxkucher/opencv/facial_thief/generation", str(idx))):
+            if os.path.isdir(os.path.join("generation", str(idx))):
                 continue
             else:
-                os.mkdir(os.path.join("/Users/maxkucher/opencv/facial_thief/generation", str(idx)))
+                os.mkdir(os.path.join("generation", str(idx)))
                 x1, y1, x2, y2 = map(int, bbox)
                 img = frame[y1:y2, x1:x2]
-                img = cv2.resize(img, (128, 128))
-                cv2.imwrite(os.path.join("/Users/maxkucher/opencv/facial_thief/generation", str(idx), f"{idx}.jpg"),
+                cv2.imwrite(os.path.join("generation", str(idx), f"{idx}.jpg"),
                             img)
 
         return img, idx
 
     def generate_images(self, img, idx):
         if img is not None and idx is not None:
-            img = torch.tensor(img, dtype=torch.float32).to(self.device)
-            img = img.permute(2, 0, 1).unsqueeze(0)
-            dir = os.path.join('/Users/maxkucher/opencv/facial_thief/generation', str(idx))
+            dir = os.path.join('generation', str(idx))
             generate(img, self.photo_amount, dir)
 
     def __call__(self):
@@ -83,7 +80,7 @@ class SortTracker:
         assert cap.isOpened()
 
         if self.remove == True:
-            path = "/Users/maxkucher/opencv/facial_thief/generation"
+            path = "generation"
             lst = os.listdir(path)
             for obj in lst:
                 shutil.rmtree(os.path.join(path, obj))
@@ -124,6 +121,6 @@ class SortTracker:
 path = 1
 device = "mps" if torch.backends.mps.is_available() else "cpu"
 # you may use any YOLO model here
-yolo = "/Users/maxkucher/opencv/facial_thief/yolov11n-face.pt"
+yolo = "yolov11n-face.pt"
 tracker = SortTracker(path, device, yolo, 5, remove=True)
 tracker()

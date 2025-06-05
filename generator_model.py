@@ -132,7 +132,7 @@ def model():
     model = VAE()
     device = "mps" if torch.backends.mps.is_available() else "cpu"
     model.to(device)
-    model.load_state_dict(torch.load("/Users/maxkucher/opencv/facial_thief/generator_weights/face_generator_VAE_02.pt", map_location=device))
+    model.load_state_dict(torch.load("generator_weights/face_generator_VAE_02.pt", map_location=device))
     print(f"Model loaded!")
     return model
 
